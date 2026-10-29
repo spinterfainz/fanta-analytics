@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fanta Analytics</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#0f1f3d;--mut:#5b6b86;--line:#dfe6f0;--navy:#0b1f3a;--green:#16a34a;--gsoft:#e3f5ea;--c1:#1e3a8a;--warn:#fff4d6;--wink:#6b4e00;--bad:#b42318;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1424;--card:#111f36;--ink:#e8eef9;--mut:#93a4c0;--line:#223454;--gsoft:#12331f;--c1:#7aa2f7;--warn:#3a2f10;--wink:#f3d98a;--bad:#ff8a80}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:flex;min-height:100vh}aside{width:220px;background:var(--navy);color:#dbe5f5;padding:18px 12px;flex:none;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+aside h1{font-size:18px;margin:0 8px 14px;color:#fff;letter-spacing:.2px}aside h1 span{color:#4ade80}
+aside a{color:#c3d1ea;text-decoration:none;padding:9px 10px;border-radius:8px;border-left:3px solid transparent}aside a.on{background:#14305a;color:#fff;border-left-color:#4ade80}aside a:hover{background:#102a4e}
+aside small{margin:auto 8px 0;color:#8fa5c9;font-size:11.5px}
+main{flex:1;min-width:0;padding:20px 24px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.top h2{margin:0;font-size:22px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}.seg button{border:0;background:none;color:var(--ink);padding:6px 14px;cursor:pointer;font:inherit}.seg button.on{background:var(--navy);color:#fff}
+.banner{background:var(--warn);color:var(--wink);border:1px solid #e6c766;border-radius:8px;padding:10px 12px;margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{background:var(--green);color:#fff;border:0;border-radius:8px;padding:7px 14px;cursor:pointer;font:inherit;font-weight:600}.btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}.btn.red{background:var(--bad)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}.card h3{margin:0 0 10px;font-size:15px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}.kpi{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--green);border-radius:8px;padding:10px 12px}.kpi b{display:block;font-size:22px}.kpi span{color:var(--mut);font-size:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:1000px){.grid2{grid-template-columns:1fr}}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.bar input,.bar select,.fld select,.fld input{padding:6px 9px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);font:inherit}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:4px 12px;cursor:pointer;font:inherit}.chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:var(--mut);font-weight:600;cursor:pointer;user-select:none;background:var(--card);position:sticky;top:0}tbody tr:hover{background:var(--gsoft)}tr.cl{cursor:pointer}
+.low{color:var(--mut);font-style:italic}.muted{color:var(--mut)}.tag{font-size:11px;background:var(--gsoft);color:var(--green);border-radius:4px;padding:1px 6px;margin-left:4px}.tag.w{background:var(--warn);color:var(--wink)}
+.pos{color:var(--green);font-weight:600}.neg{color:var(--bad);font-weight:600}
+svg text{fill:var(--mut);font-size:11px}.gl{stroke:var(--line)}.l1{stroke:var(--c1);fill:none;stroke-width:2.2}.l2{stroke:var(--green);fill:none;stroke-width:2.2}.p1{fill:var(--c1)}.p2{fill:var(--green)}
+.map{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px 14px;margin:10px 0}.fld label{display:block;font-size:12px;color:var(--mut)}.fld select,.fld input{width:100%}
+.drawer{position:fixed;inset:0;background:rgba(5,12,25,.5);display:flex;justify-content:flex-end;z-index:20}.drawer>div{background:var(--bg);width:min(760px,100%);overflow:auto;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+.rep{background:var(--gsoft);border-radius:8px;padding:8px 12px;margin-top:8px}.rep.e{background:var(--warn);color:var(--wink)}
+@media(max-width:760px){.app{flex-direction:column}aside{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap;align-items:center;padding:10px}aside h1{margin:0 8px 0 0}aside small{display:none}main{padding:14px}}
+</style></head><body>
+<div class="app"><aside><h1>Fanta <span>Analytics</span></h1>
+<a href="#dashboard" data-v="dashboard">Dashboard</a><a href="#rosa" data-v="rosa">Rosa</a><a href="#giocatori" data-v="giocatori">Giocatori</a><a href="#importazione" data-v="importazione">Importazione</a><a href="#legenda" data-v="legenda">Legenda</a>
+<small>I dati sono quelli caricati da te o dall’amministratore. Nessun collegamento a Fantacalcio.it e nessun aggiornamento automatico dei voti.</small></aside>
+<main><div class="top"><h2 id="ttl"></h2><div class="seg" id="fmt"><button data-f="classic">Classic</button><button data-f="mantra">Mantra</button></div></div><div id="ban"></div><div id="view"></div></main></div>
+<div id="dr"></div>
+<script>
+const KEY="fantaAnalyticsV1",$=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm=s=>String(s??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+const fmt=(n,d=2)=>n==null?"—":n.toFixed(d).replace(".",",");
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+const sumN=(rows,keys)=>{let t=0,f=false;rows.forEach(r=>keys.forEach(k=>{if(r[k]!=null){t+=r[k];f=true}}));return f?t:null};
+const MAN=["Por","Dd","Ds","Dc","E","M","C","W","T","A","Pc"],M2C={por:"P",dd:"D",ds:"D",dc:"D",e:"C",m:"C",c:"C",w:"C",t:"C",a:"A",pc:"A"};
+const CW={portiere:"P",difensore:"D",centrocampista:"C",attaccante:"A"};
+let S,UI={q:"",role:"",sk:"fm",sd:-1,sel:null},imp={rosa:null,voti:null},impMode={rosa:"add",voti:"add"};
+
+function demo(){let s=7;const r=()=>(s=s*16807%2147483647)/2147483647;
+ const P=[["Demo Alfa","Squadra 1","P",["Por"]],["Demo Beta","Squadra 2","D",["Dd","E"]],["Demo Gamma","Squadra 3","D",["Dc"]],["Demo Delta","Squadra 1","D",["Ds"]],["Demo Epsilon","Squadra 4","C",["M","C"]],["Demo Zeta","Squadra 2","C",["T"]],["Demo Eta","Squadra 5","C",["W","A"]],["Demo Theta","Squadra 3","A",["Pc"]],["Demo Iota","Squadra 4","A",["A","Pc"]]];
+ const roster=[],votes=[];
+ P.forEach(([nome,squadra,ruolo,mantra],i)=>{const k=norm(nome);roster.push({k,nome,squadra,ruolo,mantra,costo:null});
+  for(let g=1;g<=8;g++){const v={k,nome,g,voto:null,fanta:null,gol:null,ass:null,amm:null,esp:null,aut:null,rs:null,gs:null,rp:null};
+   if(r()>.13){v.voto=Math.round((5+r()*3)*2)/2;v.gol=r()<(ruolo=="A"?.35:ruolo=="C"?.12:.04)?1:0;v.ass=r()<.12?1:0;v.amm=r()<.15?1:0;v.esp=0;v.aut=0;v.rs=0;
+    if(ruolo=="P"){v.gs=Math.floor(r()*3);v.rp=0}v.fanta=v.voto+3*v.gol+v.ass-.5*v.amm-(v.gs||0)}
+   votes.push(v)}});
+ return{fmt:"classic",demo:true,hasVoto:true,roster,votes}}
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+const DR={gol:3,ass:1,rp:3,rs:-3,aut:-2,amm:-.5,esp:-1,gs:-1};if(!S||!S.roster)S=demo();if(!S.rules)S.rules={...DR};if(!S.fvMode)S.fvMode="auto";
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(SH.db&&!SH.owner&&!S.demo?{...S,votes:[]}:S))}catch(e){}};
+
+/* ---------- CALCOLI ---------- */
+function eff(r,p){if(S.fvMode!=="calc"&&r.fanta!=null)return{...r,fc:false};if(r.voto==null)return{...r,fanta:S.fvMode==="calc"?null:r.fanta,fc:false};
+ const gk=p.ruolo==="P"||(p.mantra||[]).includes("Por");let t=r.voto;for(const[k,w]of Object.entries(S.rules)){if(k==="gs"&&!gk)continue;t+=w*(r[k]||0)}return{...r,fanta:t,fc:true}}
+const isValid=v=>S.hasVoto?v.voto!=null:v.fanta!=null;
+function compute(all){
+ const by={};S.votes.filter(v=>all||inR(v.g)).forEach(v=>(by[v.k]=by[v.k]||[]).push(v));
+ let base=S.roster.slice(),derived=false;
+ if(!base.length&&S.votes.length&&!CEN()){derived=true;const seen={};S.votes.forEach(v=>{if(!seen[v.k]){seen[v.k]=1;base.push({k:v.k,nome:v.nome,squadra:"",ruolo:v.ruolo||"",mantra:v.mantra||[]})}})}
+ const G=[...new Set(base.flatMap(p=>(by[p.k]||[]).map(v=>v.g)))].sort((a,b)=>a-b);
+ const P=base.map(p=>{const rows=(by[p.k]||[]).map(r=>eff(r,p)).sort((a,b)=>a.g-b.g),val=rows.filter(isValid);
+  const vv=val.filter(r=>r.voto!=null).map(r=>r.voto),ff=val.filter(r=>r.fanta!=null).map(r=>r.fanta);
+  const useF=ff.length>0,metric=r=>useF?r.fanta:r.voto,l5r=val.filter(r=>metric(r)!=null).slice(-5),l5=avg(l5r.map(metric)),ref=useF?avg(ff):avg(vv);
+  return{...p,rows,val,pres:val.length,pct:G.length&&rows.length?val.length/G.length*100:null,mv:avg(vv),fm:avg(ff),l5,l5n:l5r.length,d:l5!=null&&ref!=null?l5-ref:null,
+   gol:sumN(rows,["gol"]),ass:sumN(rows,["ass"]),mal:sumN(rows,["amm","esp","aut","rs"]),gs:sumN(rows,["gs"]),rp:sumN(rows,["rp"]),low:val.length<3}});
+ return{P,G,derived}}
+const flt=P=>P.filter(p=>{if(UI.q&&!norm(p.nome).includes(norm(UI.q)))return false;
+ if(UI.role)return S.fmt==="classic"?p.ruolo===UI.role:(p.mantra||[]).includes(UI.role);return true});
+
+/* ---------- GRAFICI ---------- */
+function lineChart(xs,series){const W=640,H=240,L=34,R=12,T=12,B=26,all=series.flatMap(s=>s.y).filter(v=>v!=null);
+ if(xs.length<2||all.length<2)return`<p class="muted">Dati insufficienti per il grafico: servono almeno due valori validi su giornate diverse.</p>`;
+ const lo=Math.floor(Math.min(...all)-.5),hi=Math.ceil(Math.max(...all)+.5),st=Math.max(1,Math.ceil((hi-lo)/5));
+ const X=i=>L+i*(W-L-R)/(xs.length-1),Y=v=>T+(hi-v)*(H-T-B)/(hi-lo);let o=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img">`;
+ for(let t=lo;t<=hi;t+=st)o+=`<line class="gl" x1="${L}" x2="${W-R}" y1="${Y(t)}" y2="${Y(t)}"/><text x="${L-5}" y="${Y(t)+4}" text-anchor="end">${t}</text>`;
+ const se=Math.ceil(xs.length/14);xs.forEach((x,i)=>{if(i%se==0)o+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle">${x}</text>`});
+ series.forEach((s,j)=>{let d="",pen=false;s.y.forEach((v,i)=>{if(v==null){pen=false;return}d+=(pen?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1);pen=true});
+  o+=`<path class="l${j+1}" d="${d}"/>`;s.y.forEach((v,i)=>{if(v!=null)o+=`<circle class="p${j+1}" cx="${X(i)}" cy="${Y(v)}" r="3.2"><title>${s.name}, giornata ${xs[i]}: ${fmt(v)}${s.n?" (su "+s.n[i]+" valutazioni)":""}</title></circle>`})});
+ return o+`</svg><div class="muted">${series.map((s,j)=>`<span class="${j?"pos":""}" style="${j?"":"color:var(--c1);font-weight:600"}">● ${s.name}</span>`).join(" &nbsp; ")} &nbsp; Le giornate senza dati restano vuote, non sono zeri.</div>`}
+function formChart(P){const L=P.filter(p=>p.l5!=null).sort((a,b)=>b.l5-a.l5).slice(0,10);
+ if(!L.length)return`<p class="muted">Dati insufficienti: nessun giocatore ha prestazioni valide.</p>`;
+ const mx=Math.max(10,...L.map(p=>p.l5),...L.map(p=>p.fm??p.mv??0)),W=480,LB=140,rh=40,bw=W-LB-44,w=v=>Math.max(0,v)/mx*bw;let o=`<svg viewBox="0 0 ${W} ${L.length*rh+4}" width="100%">`;
+ L.forEach((p,i)=>{const ref=p.fm??p.mv,y=i*rh+4,nm=p.nome.length>19?p.nome.slice(0,18)+"…":p.nome;
+  o+=`<text x="0" y="${y+13}" style="fill:var(--ink);font-size:13px;font-weight:600"><title>${esc(p.nome)}</title>${esc(nm)}</text><rect x="${LB}" y="${y+2}" width="${w(p.l5)}" height="13" rx="3" style="fill:var(--green)"/><text x="${LB+w(p.l5)+5}" y="${y+13}" style="fill:var(--ink);font-size:12px;font-weight:600">${fmt(p.l5)}</text>`;
+  if(ref!=null)o+=`<rect x="${LB}" y="${y+18}" width="${w(ref)}" height="10" rx="3" style="fill:var(--c1)"/><text x="${LB+w(ref)+5}" y="${y+27}" style="fill:var(--mut);font-size:12px">${fmt(ref)}</text>`});
+ return o+`</svg><div style="font-size:13px;margin-top:6px"><span class="pos">■ Ultime 5 prestazioni valide</span> &nbsp; <span style="color:var(--c1);font-weight:600">■ Media stagionale</span><br><span class="muted">Media stagionale = fantamedia, o media voto se mancano i fantavoti. Primi 10 giocatori per forma recente.</span></div>`}
+function formChartOld(P){const L=P.filter(p=>p.l5!=null).sort((a,b)=>b.l5-a.l5).slice(0,10);
+ if(!L.length)return`<p class="muted">Dati insufficienti: nessun giocatore ha prestazioni valide.</p>`;
+ const mx=Math.max(10,...L.map(p=>p.l5),...L.map(p=>p.mv??0)),W=640,rh=26;let o=`<svg viewBox="0 0 ${W} ${L.length*rh+8}" width="100%">`;
+ L.forEach((p,i)=>{const ref=p.fm??p.mv,y=i*rh+4,w=v=>Math.max(0,v)/mx*(W-210);
+  o+=`<text x="0" y="${y+12}">${esc(p.nome.slice(0,22))}</text><rect x="150" y="${y}" width="${w(p.l5)}" height="9" rx="2" style="fill:var(--green)"/><text x="${156+w(p.l5)}" y="${y+9}">${fmt(p.l5)}</text>`;
+  if(ref!=null)o+=`<rect x="150" y="${y+11}" width="${w(ref)}" height="7" rx="2" style="fill:var(--c1)"/><text x="${156+w(ref)}" y="${y+18}">${fmt(ref)}</text>`});
+ return o+`</svg><div class="muted"><span class="pos">■ Ultime 5 valide</span> &nbsp; <span style="color:var(--c1);font-weight:600">■ Media stagionale</span> (fantamedia, o media voto se mancano i fantavoti)</div>`}
+
+/* ---------- TABELLE E FILTRI ---------- */
+function filterBar(P){const roles=S.fmt==="classic"?["P","D","C","A"]:MAN.filter(r=>P.some(p=>(p.mantra||[]).includes(r)));
+ return`<div class="bar"><input id="q" list="pl" autocomplete="off" placeholder="Cerca o scegli un giocatore" value="${esc(UI.q)}"><datalist id="pl">${P.filter(p=>(!UI.role||(S.fmt==="classic"?p.ruolo===UI.role:(p.mantra||[]).includes(UI.role)))&&(!(UI.g1||UI.g2)||p.rows.length)).sort((a,b)=>a.nome.localeCompare(b.nome,"it")).map(p=>`<option value="${esc(p.nome)}">`).join("")}</datalist><button class="chip ${UI.role?"":"on"}" onclick="setRole('')">Tutti</button>${roles.map(r=>`<button class="chip ${UI.role==r?"on":""}" onclick="setRole('${r}')">${r}</button>`).join("")}${gSel()}${UI.q||UI.role||UI.g1||UI.g2?`<button class="chip" onclick="resetF()">Elimina filtri</button>`:""}</div>`+
+ (S.fmt==="mantra"&&!roles.length?`<p class="muted">Nessun dato Mantra disponibile: nell’importazione della rosa associa la colonna dei ruoli Mantra.</p>`:"")}
+function table(P,full){const C=[["nome","Giocatore"],["ruolo","Ruolo"],["pres","Pres."],["pct","% con voto"],["mv","Media voto"],["fm","Fantamedia"],["l5","Ult. 5"],["d","Δ forma"],["gol","Gol"],["ass","Assist"],["mal","Malus"]].concat(full?[["gs","Gol sub."],["rp","Rig. par."]]:[]);
+ const R=p=>S.fmt==="classic"?(p.ruolo||"—"):((p.mantra||[]).join("/")||"—"),key=UI.sk;
+ const L=P.slice().sort((a,b)=>{let x=key=="ruolo"?R(a):a[key],y=key=="ruolo"?R(b):b[key];if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;return(typeof x=="string"?x.localeCompare(y):x-y)*(key=="nome"||key=="ruolo"?-UI.sd:UI.sd)});
+ if(!L.length)return`<p class="muted">Nessun giocatore corrisponde ai filtri.</p>`;
+ const n=(p,k,d=2)=>p[k]==null?"—":fmt(p[k],d),lw=p=>p.low?"low":"";
+ return`<div class="tw"><table><thead><tr>${C.map(c=>`<th onclick="sortBy('${c[0]}')">${c[1]}${key==c[0]?(UI.sd<0?" ▼":" ▲"):""}</th>`).join("")}</tr></thead><tbody>${L.map(p=>`<tr class="cl" data-k="${esc(p.k)}" onclick="openP(this.dataset.k)"><td>${esc(p.nome)}${p.low?`<span class="tag w" title="Meno di 3 valutazioni valide: medie poco affidabili">dati insufficienti</span>`:""}<div class="muted" style="font-size:11px">${esc(p.squadra)}</div></td><td>${R(p)}</td><td>${p.pres}</td><td>${p.pct==null?"—":fmt(p.pct,0)+"%"}</td><td class="${lw(p)}">${n(p,"mv")}</td><td class="${lw(p)}">${n(p,"fm")}</td><td>${n(p,"l5")}${p.l5n&&p.l5n<5?` <span class="muted" title="Solo ${p.l5n} prestazioni valide">(${p.l5n})</span>`:""}</td><td class="${p.d>0?"pos":p.d<0?"neg":""}">${p.d==null?"—":(p.d>0?"+":"")+fmt(p.d)}</td><td>${n(p,"gol",0)}</td><td>${n(p,"ass",0)}</td><td>${n(p,"mal",0)}</td>${full?`<td>${n(p,"gs",0)}</td><td>${n(p,"rp",0)}</td>`:""}</tr>`).join("")}</tbody></table></div>`}
+let KEEP=null;UI.met="fanta";const COL=["#2563eb","#16a34a","#d97706","#dc2626","#7c3aed","#0891b2","#db2777","#65a30d","#475569","#ea580c"],setMet=m=>{UI.met=m;render()};
+function multiChart(xs,SR){const W=640,H=260,L=34,R=12,T=12,B=26,all=SR.flatMap(s=>s.y).filter(v=>v!=null);
+ if(xs.length<2||all.length<2)return`<p class="muted">Dati insufficienti per il grafico: servono almeno due valori validi su giornate diverse.</p>`;
+ const lo=Math.floor(Math.min(...all)-.5),hi=Math.ceil(Math.max(...all)+.5),st=Math.max(1,Math.ceil((hi-lo)/5)),X=i=>L+i*(W-L-R)/(xs.length-1),Y=v=>T+(hi-v)*(H-T-B)/(hi-lo);let o=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img">`;
+ for(let t=lo;t<=hi;t+=st)o+=`<line class="gl" x1="${L}" x2="${W-R}" y1="${Y(t)}" y2="${Y(t)}"/><text x="${L-5}" y="${Y(t)+4}" text-anchor="end">${t}</text>`;
+ const se=Math.ceil(xs.length/14);xs.forEach((x,i)=>{if(i%se==0)o+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle">${x}</text>`});
+ SR.forEach((s,j)=>{const c=COL[j%10],da=j>=10?' stroke-dasharray="5 4"':"";let d="",pen=false;s.y.forEach((v,i)=>{if(v==null){pen=false;return}d+=(pen?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1);pen=true});
+  o+=`<path d="${d}" fill="none" stroke="${c}" stroke-width="2"${da}/>`;s.y.forEach((v,i)=>{if(v!=null)o+=`<circle cx="${X(i)}" cy="${Y(v)}" r="3" fill="${c}"><title>${esc(s.name)}, giornata ${xs[i]}: ${fmt(v)}</title></circle>`})});
+ return o+`</svg><div class="muted" style="display:flex;gap:4px 12px;flex-wrap:wrap">${SR.map((s,j)=>`<span style="cursor:pointer" data-k="${esc(s.k)}" onclick="openP(this.dataset.k)"><span style="color:${COL[j%10]}">●</span> ${esc(s.name)}</span>`).join("")}</div>`}
+function roleCharts(P,G){const cl=S.fmt==="classic",roles=cl?["P","D","C","A"]:MAN,nm={P:"Portieri",D:"Difensori",C:"Centrocampisti",A:"Attaccanti"},f=UI.met,lab=f=="fanta"?"fantavoto":"voto",rg=f=="fanta"?3.5:2.5,q=P.filter(p=>!UI.q||norm(p.nome).includes(norm(UI.q)));
+ const bg=v=>{if(v==null)return"";const d=(v-6)/rg,a=Math.min(.65,Math.abs(d)*.65).toFixed(2);return"background:"+(d<0?`rgba(220,38,38,${a})`:`rgba(22,163,74,${a})`)+";"};
+ const th="cursor:default;text-align:center;padding:6px 3px",ic=c=>`<span style="display:inline-block;width:10px;height:14px;border-radius:2px;background:${c};vertical-align:middle"></span>`,H=(k,l,ex,t)=>`<th style="${th};cursor:pointer;${ex}" title="${t}" onclick="setHs('${k}')">${l}${UI.hk==k?(UI.hd<0?" ▼":" ▲"):""}</th>`,srt=(a,b)=>{const gv=x=>UI.hk=="nome"?x.p.nome:UI.hk.startsWith("g:")?x.y[G.indexOf(+UI.hk.slice(2))]:x[UI.hk],u=gv(a),v=gv(b);if(u==null&&v==null)return 0;if(u==null)return 1;if(v==null)return -1;return(typeof u=="string"?u.localeCompare(v,"it"):u-v)*UI.hd};let out="";
+ roles.forEach(r=>{if(UI.role&&UI.role!==r)return;const pl=q.filter(p=>cl?p.ruolo===r:(p.mantra||[]).includes(r));if(!pl.length)return;
+  const gk=cl?r==="P":r==="Por",rows=pl.map(p=>{const by={};p.val.forEach(v=>by[v.g]=v);const y=G.map(g=>by[g]?by[g][f]:null),vs=y.filter(v=>v!=null);return{p,y,m:avg(vs),n:vs.length,gf:sumN(p.rows,["gol"]),gs:sumN(p.rows,["gs"]),es:sumN(p.rows,["esp"]),am:sumN(p.rows,["amm"])}}).sort(srt);
+  out+=`<h3 style="margin:14px 0 6px">${cl?nm[r]:r} <span class="muted" style="font-weight:400">(${pl.length})</span></h3><div class="tw"><table style="width:auto"><thead><tr>${H("nome","Giocatore",";text-align:left;position:sticky;left:0;z-index:1","Ordina per nome")}${G.map(g=>H("g:"+g,g,"","Ordina per la giornata "+g)).join("")}${H("m","Media","","Ordina per media")}${H("n","#","","Giornate con valore valido, usate per la media")}${H("gf","GF","","Gol fatti")}${gk?H("gs","GS","","Gol subiti (solo portieri)"):""}${H("es",ic("#dc2626"),"","Cartellini rossi (espulsioni)")}${H("am",ic("#facc15"),"","Cartellini gialli (ammonizioni)")}</tr></thead><tbody>${rows.map(x=>`<tr><td data-k="${esc(x.p.k)}" onclick="openP(this.dataset.k)" style="position:sticky;left:0;background:var(--card);cursor:pointer">${esc(x.p.nome)}</td>${x.y.map((v,i)=>`<td style="text-align:center;padding:6px 3px;min-width:34px;${bg(v)}" title="${esc(x.p.nome)}, giornata ${G[i]}: ${v==null?"nessun valore":fmt(v)}">${v==null?'<span class="muted">·</span>':fmt(v,1)}</td>`).join("")}<td class="${x.n<3?"low":""}" style="text-align:center"><b>${fmt(x.m)}</b></td><td style="text-align:center">${x.n}</td><td style="text-align:center">${fmt(x.gf,0)}</td>${gk?`<td style="text-align:center">${fmt(x.gs,0)}</td>`:""}<td style="text-align:center">${fmt(x.es,0)}</td><td style="text-align:center">${fmt(x.am,0)}</td></tr>`).join("")}</tbody></table></div>`});
+ return`<div class="card"><h3>Mappa di calore per ruolo</h3><div class="bar"><div class="seg"><button class="${f=="fanta"?"on":""}" onclick="setMet('fanta')">Fantavoto</button><button class="${f=="voto"?"on":""}" onclick="setMet('voto')">Voto</button></div><span class="muted">Rosso sotto 6, verde sopra 6 (intensità massima a ±${fmt(rg,1)}); la scala è fissa, uguale per tutti i giocatori. · = giornata senza ${lab} valido, non uno zero. Media e # (valori usati) sono calcolati solo sui valori validi, in corsivo se # è minore di 3. GF, GS (solo portieri) e cartellini sono i totali delle giornate considerate; «—» = dato non presente nel file importato. Clicca un nome per la scheda, o l’intestazione di una colonna per ordinare le righe.</span></div>${out||`<p class="muted">Nessun giocatore per i filtri scelti.${cl?"":" In Mantra servono i ruoli Mantra importati."}</p>`}</div>`}
+function roleChartsOld(P,G){const cl=S.fmt==="classic",roles=cl?["P","D","C","A"]:MAN,nm={P:"Portieri",D:"Difensori",C:"Centrocampisti",A:"Attaccanti"},f=UI.met,lab=f=="fanta"?"fantavoto":"voto",q=P.filter(p=>!UI.q||norm(p.nome).includes(norm(UI.q)));let out="";
+ roles.forEach(r=>{if(UI.role&&UI.role!==r)return;const pl=q.filter(p=>cl?p.ruolo===r:(p.mantra||[]).includes(r));if(!pl.length)return;const ser=[],none=[];
+  pl.forEach(p=>{const by={};p.val.forEach(v=>by[v.g]=v);const y=G.map(g=>by[g]?by[g][f]:null);y.some(v=>v!=null)?ser.push({name:p.nome,k:p.k,y}):none.push(p.nome)});
+  out+=`<div class="card" style="margin:0"><h3>${cl?nm[r]:r} (${pl.length})</h3>${multiChart(G,ser)}${none.length?`<p class="muted">Senza ${lab} valido: ${esc(none.join(", "))}</p>`:""}</div>`});
+ return`<div class="card"><h3>Andamento dei singoli giocatori per ruolo</h3><div class="bar"><div class="seg"><button class="${f=="fanta"?"on":""}" onclick="setMet('fanta')">Fantavoto</button><button class="${f=="voto"?"on":""}" onclick="setMet('voto')">Voto</button></div><span class="muted">Asse delle giornate comune. Le giornate senza valore restano vuote, non sono zeri. Clicca un nome in legenda per aprire la scheda.</span></div>${out?`<div class="grid2">${out}</div>`:`<p class="muted">Nessun giocatore per i filtri scelti.${cl?"":" In Mantra servono i ruoli Mantra importati."}</p>`}</div>`}
+const inR=g=>(!UI.g1||g>=UI.g1)&&(!UI.g2||g<=UI.g2);
+function gSel(){const A=[...new Set(S.votes.map(v=>v.g))].sort((a,b)=>a-b);if(!A.length)return"";const o=s=>`<option value="">tutte</option>`+A.map(g=>`<option ${s==g?"selected":""}>${g}</option>`).join("");
+ const l5=A.length>=5?A[A.length-5]:A[0],on=UI.g1==l5&&!UI.g2;return`<button class="chip ${on?"on":""}" onclick="setL5()" title="Considera solo le ultime 5 giornate presenti nei dati">Ultime 5 giornate</button><span class="muted">Giornate: da</span><select onchange="setG('g1',this.value)">${o(UI.g1)}</select><span class="muted">a</span><select onchange="setG('g2',this.value)">${o(UI.g2)}</select>`+(UI.g1&&UI.g2&&UI.g1>UI.g2?`<span class="neg">intervallo non valido</span>`:"")}
+UI.hk="m";UI.hd=-1;const setHs=k=>{if(UI.hk==k)UI.hd=-UI.hd;else{UI.hk=k;UI.hd=k=="nome"?1:-1}render()};
+const resetF=()=>{UI.q="";UI.role="";UI.g1=null;UI.g2=null;render()};
+const setL5=()=>{const A=[...new Set(S.votes.map(v=>v.g))].sort((a,b)=>a-b),l5=A.length>=5?A[A.length-5]:A[0];if(UI.g1==l5&&!UI.g2)UI.g1=null;else{UI.g1=l5;UI.g2=null}render()};
+const setG=(k,v)=>{UI[k]=v?+v:null;render()};
+const setRole=r=>{UI.role=r;render()},sortBy=k=>{UI.sd=UI.sk==k?-UI.sd:-1;UI.sk=k;render()};
+
+/* ---------- VISTE ---------- */
+function dashboard(){const{P,G,derived}=compute(),F=flt(P);
+ if(!P.length)return`<div class="card"><h3>Nessun dato</h3><p>${CEN()?"Importa la tua rosa dalla sezione Importazione: i voti sono caricati centralmente.":"Importa la tua rosa e i voti dalla sezione Importazione."}</p><a class="btn" href="#importazione" style="text-decoration:none;display:inline-block">Vai all’importazione</a></div>`;
+ const rows=F.flatMap(p=>p.val),vv=rows.filter(r=>r.voto!=null).map(r=>r.voto),ff=rows.filter(r=>r.fanta!=null).map(r=>r.fanta),withData=F.filter(p=>p.rows.length);
+ const pres=F.reduce((a,p)=>a+p.pres,0),pct=withData.length&&G.length?pres/(withData.length*G.length)*100:null;
+ const tot=k=>sumN(F,[k]),mk=(b,l)=>`<div class="kpi"><b>${b}</b><span>${l}</span></div>`;
+ const xs=G,sv=(f)=>xs.map(g=>avg(F.flatMap(p=>p.val.filter(r=>r.g==g&&r[f]!=null).map(r=>r[f])))),cn=f=>xs.map(g=>F.flatMap(p=>p.val.filter(r=>r.g==g&&r[f]!=null)).length);
+ return(derived?`<div class="rep e">Nessuna rosa importata: l’elenco dei giocatori è ricavato dal file dei voti.</div><br>`:"")+filterBar(P)+
+ `<div class="kpis">${mk(F.length,"Giocatori in rosa")}${mk(fmt(avg(vv)),"Media voto ("+vv.length+" valutazioni)")}${mk(fmt(avg(ff)),"Fantamedia ("+ff.length+" valutazioni)")}${mk(pct==null?"—":fmt(pct,0)+"%","% partite con voto")}${mk(fmt(tot("gol"),0),"Gol")}${mk(fmt(tot("ass"),0),"Assist")}${mk(fmt(tot("mal"),0),"Malus (amm., esp., autogol, rig. sbagl.)")}</div>
+ <p class="muted">Giornate considerate (filtro attivo se impostato): ${G.length}. Le medie usano solo valutazioni valide: i dati mancanti (SV) non sono contati come zeri. La percentuale è calcolata sulle giornate presenti nei dati caricati.${P.some(p=>p.rows.some(r=>r.fc))?" Dove il file non contiene il fantavoto, è calcolato da voto, bonus e malus con le regole impostate in Importazione.":""}</p>
+ <div class="grid2"><div class="card"><h3>Andamento medie per giornata (giocatori filtrati)</h3>${lineChart(xs,[{name:"Media voto",y:sv("voto"),n:cn("voto")},{name:"Fantamedia",y:sv("fanta"),n:cn("fanta")}])}</div>
+ <div class="card"><h3>Ultime cinque prestazioni valide a confronto</h3>${formChart(F)}</div></div>
+ ${roleCharts(P,G)}<div class="card"><h3>Giocatori</h3>${table(F,false)}</div>`}
+function rosa(){const{P,derived}=compute(true),c={P:0,D:0,C:0,A:0,"?":0};P.forEach(p=>c[p.ruolo||"?"]++);
+ return`<div class="kpis">${["P","D","C","A"].map(r=>`<div class="kpi"><b>${c[r]}</b><span>${{P:"Portieri",D:"Difensori",C:"Centrocampisti",A:"Attaccanti"}[r]}</span></div>`).join("")}<div class="kpi"><b>${P.length}</b><span>Totale${c["?"]?` (${c["?"]} senza ruolo)`:""}</span></div></div>`+
+ (derived?`<div class="rep e">Rosa ricavata dal file dei voti: importa l’elenco della rosa per avere squadra e ruoli.</div>`:"")+
+ `<div class="card"><div class="tw"><table><thead><tr><th>Giocatore</th><th>Squadra</th><th>Ruolo Classic</th><th>Ruoli Mantra</th><th>Costo</th><th>Giornate con voto</th><th></th></tr></thead><tbody>${P.map(p=>`<tr><td>${esc(p.nome)}</td><td>${esc(p.squadra)||"—"}</td><td>${p.ruolo||"—"}</td><td>${(p.mantra||[]).join(", ")||"non disponibile"}</td><td>${p.costo==null?"—":fmt(p.costo,0)}</td><td>${p.pres}</td><td><button class="btn sec" data-k="${esc(p.k)}" onclick="delP(this.dataset.k)">Rimuovi</button></td></tr>`).join("")||`<tr><td colspan="7" class="muted">Rosa vuota.</td></tr>`}</tbody></table></div></div>`}
+function giocatori(){const{P}=compute();return filterBar(P)+`<div class="card">${table(flt(P),true)}<p class="muted">Clicca su un giocatore per la scheda dettagliata. “Malus” = ammonizioni + espulsioni + autogol + rigori sbagliati; i gol subiti sono separati.</p></div>`}
+function delP(k){if(!confirm("Rimuovere il giocatore e i suoi voti?"))return;S.roster=S.roster.filter(p=>p.k!==k);S.votes=S.votes.filter(v=>v.k!==k);save();render()}
+
+function openP(k){UI.sel=k;drawer()}
+function drawer(){const el=$("#dr");if(!UI.sel){el.innerHTML="";return}
+ const{P,G}=compute(true),p=P.find(x=>x.k===UI.sel);if(!p){el.innerHTML="";return}
+ const by={};p.rows.forEach(r=>by[r.g]=r);const yv=G.map(g=>by[g]&&isValid(by[g])?by[g].voto:null),yf=G.map(g=>by[g]&&isValid(by[g])?by[g].fanta:null);
+ const mk=(b,l)=>`<div class="kpi"><b>${b}</b><span>${l}</span></div>`,s=(k)=>fmt(sumN(p.rows,[k]),0);
+ el.innerHTML=`<div class="drawer" onclick="if(event.target===this)closeP()"><div><div class="top"><div><h2 style="margin:0">${esc(p.nome)}</h2><span class="muted">${esc(p.squadra)||"Squadra non indicata"} · ${S.fmt==="classic"?p.ruolo||"ruolo n.d.":(p.mantra||[]).join("/")||"ruoli Mantra non disponibili"}</span></div><button class="btn sec" onclick="closeP()">Chiudi</button></div>
+ ${p.low?`<div class="rep e">Dati insufficienti: ${p.pres} valutazion${p.pres==1?"e valida":"i valide"}. Le medie sono indicative.</div><br>`:""}
+ <div class="kpis">${mk(p.pres,"Presenze con voto")}${mk(p.pct==null?"—":fmt(p.pct,0)+"%","% partite con voto")}${mk(fmt(p.mv),"Media voto")}${mk(fmt(p.fm),"Fantamedia")}${mk(fmt(p.l5),"Media ultime "+p.l5n+" valide")}${mk(p.d==null?"—":(p.d>0?"+":"")+fmt(p.d),"Δ forma")}</div>
+ <div class="card"><h3>Bonus e malus (conteggi)</h3>Bonus: gol ${s("gol")}, assist ${s("ass")}, rigori parati ${s("rp")} · Malus: ammonizioni ${s("amm")}, espulsioni ${s("esp")}, autogol ${s("aut")}, rigori sbagliati ${s("rs")}, gol subiti ${s("gs")}<br><span class="muted">“—” = dato non presente nel file importato.</span></div>
+ <div class="card"><h3>Rendimento nel tempo</h3>${lineChart(G,[{name:"Voto",y:yv},{name:"Fantavoto",y:yf}])}</div>
+ <div class="card"><h3>Dettaglio giornate</h3>${p.rows.some(r=>r.fc)?`<p class="muted" style="margin:0 0 6px">* fantavoto calcolato da voto, bonus e malus con le regole impostate.</p>`:""}<div class="tw"><table><thead><tr><th>G</th><th>Voto</th><th>Fantavoto</th><th>Gol</th><th>Ass.</th><th>Amm.</th><th>Esp.</th><th>Aut.</th><th>Rig. sb.</th><th>Gol sub.</th><th>Rig. par.</th></tr></thead><tbody>${p.rows.map(r=>`<tr><td>${r.g}</td><td>${r.voto==null?"SV":fmt(r.voto)}</td><td>${fmt(r.fanta)}${r.fc?"*":""}</td>${["gol","ass","amm","esp","aut","rs","gs","rp"].map(f=>`<td>${r[f]==null?"—":r[f]}</td>`).join("")}</tr>`).join("")||`<tr><td colspan="11" class="muted">Nessun dato per le giornate.</td></tr>`}</tbody></table></div></div></div></div>`}
+const closeP=()=>{UI.sel=null;drawer()};
+
+/* ---------- IMPORTAZIONE ---------- */
+const FIELDS={rosa:[["nome","Nome giocatore *",["giocatore","nome","calciatore","cognome"]],["squadra","Squadra",["squadra","team","club"]],["ruolo","Ruolo Classic",["ruolo","r","role"]],["mantra","Ruoli Mantra",["ruolomantra","ruolimantra","rm","mantra","posizioni"]],["costo","Costo / quotazione",["costo","prezzo","crediti","qt","quotazione","qtattuale"]]],
+ voti:[["nome","Nome giocatore *",["giocatore","nome","calciatore","cognome"]],["g","Giornata * (oppure dal nome file)",["giornata","g","gg","giorn","turno"]],["voto","Voto",["voto","vt","v","votogazzetta"]],["fanta","Fantavoto",["fantavoto","fv","fantav","fvoto"]],["gol","Gol",["gol","goal","gf","golfatti","reti","golsegnati"]],["ass","Assist",["assist","ass","assists"]],["amm","Ammonizioni",["ammonizioni","amm","ammonito","gialli"]],["esp","Espulsioni",["espulsioni","esp","espulso","rossi"]],["aut","Autogol",["autogol","aut","autoreti","ag"]],["rs","Rigori sbagliati",["rigorisbagliati","rigsbagliati","rs","rigoresbagliato"]],["gs","Gol subiti",["golsubiti","gs","subiti"]],["rp","Rigori parati",["rigoriparati","rp","rigparati","rigoreparato"]],["ruolo","Ruolo (solo se manca la rosa)",["ruolo","r"]]]};
+function parseCSV(t){if(t.charCodeAt(0)===65279)t=t.slice(1);const f=t.split(/\r?\n/,1)[0],d=[";","\t",","].map(c=>[c,f.split(c).length]).sort((a,b)=>b[1]-a[1])[0][0];
+ const rows=[];let row=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];
+  if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}
+  else if(ch=='"')q=true;else if(ch==d){row.push(c);c=""}else if(ch=="\n"||ch=="\r"){if(ch=="\r"&&t[i+1]=="\n")i++;row.push(c);rows.push(row);row=[];c=""}else c+=ch}
+ if(c!==""||row.length){row.push(c);rows.push(row)}return rows.filter(r=>r.some(x=>String(x).trim()!==""))}
+function num(x){if(x==null)return null;if(typeof x=="number")return isFinite(x)?x:null;let s=String(x).trim().replace("½",".5").replace(",",".");
+ if(s===""||/^(sv|s\.v\.|sc|s\.c\.|-+|n\.?d\.?|na)$/i.test(s))return null;const n=Number(s);return isFinite(n)?n:NaN}
+const cell=(r,i)=>i>=0?r[i]:null,txt=x=>x==null?"":String(x).trim();
+function autoHr(raw){const i=raw.findIndex(r=>r.filter(c=>txt(c)!=="").length>=2);return i<0?0:i}
+function guess(kind,raw,hr){const h=(raw[hr]||[]).map(c=>norm(c).replace(/ /g,"")),used=new Set(),m={};
+ FIELDS[kind].forEach(([f,,syn])=>{let i=-1;for(const s of syn){i=h.findIndex((x,j)=>!used.has(j)&&x===s);if(i>=0)break}
+  if(i<0&&f!=="ruolo")for(const s of syn){if(s.length<4)continue;i=h.findIndex((x,j)=>!used.has(j)&&x.includes(s)&&!(f==="voto"&&x.includes("fanta")));if(i>=0)break}
+  if(i>=0)used.add(i);m[f]=i});return m}
+function guessG(n){n=n.replace(/\.[^.]+$/,"");const m=n.match(/(?:giornata|giorn|gg?)[\s_\-.]*(\d{1,2})(?!\d)/i);if(m)return+m[1];const a=n.match(/(?<!\d)\d{1,2}(?!\d)/g);return a?+a[a.length-1]:null}
+async function loadFile(kind,file,ret){if(!file)return;const name=file.name,ext=name.split(".").pop().toLowerCase(),buf=await file.arrayBuffer();let I={name,report:""};
+ try{if(["xlsx","xls","xlsm"].includes(ext)){if(!window.XLSX)throw new Error("La libreria Excel non si è caricata. Salva il file come CSV (File → Salva con nome → CSV UTF-8) e riprova.");
+   I.wb=XLSX.read(buf,{type:"array"});I.sheets=I.wb.SheetNames;I.sheet=I.sheets[0];setSheet(I)}
+  else if(["csv","txt","tsv"].includes(ext)){let t;try{t=new TextDecoder("utf-8",{fatal:true}).decode(buf)}catch(e){t=new TextDecoder("windows-1252").decode(buf)}I.raw=parseCSV(t)}
+  else throw new Error("Formato non supportato: usa un file .csv o .xlsx.");
+  if(!I.raw.length)throw new Error("Il file non contiene righe con dati.");I.hr=autoHr(I.raw);I.map=guess(kind,I.raw,I.hr);I.gFile=kind=="voti"?guessG(name):null}
+ catch(e){I.err=e.message}if(ret)return I;imp[kind]=I;renderImp()}
+async function loadFiles(kind,files){files=[...files].sort((a,b)=>a.name.localeCompare(b.name,"it",{numeric:true}));if(!files.length)return;if(kind=="rosa"||files.length<2)return loadFile(kind,files[0]);
+ const U=[];for(const f of files)U.push(await loadFile(kind,f,true));const ok=U.find(u=>!u.err);
+ imp[kind]=ok?{name:files.length+" file",batch:U,raw:ok.raw,hr:ok.hr,map:ok.map,report:""}:{name:"",batch:U,err:"Nessun file leggibile.",report:""};renderImp()}
+function batchList(B){const g=B.batch.filter(u=>!u.err).map(u=>u.gFile),dup=g.some((x,i)=>x!=null&&g.indexOf(x)!==i),miss=g.some(x=>x==null);
+ return`<div class="card" style="margin:10px 0"><b>${B.batch.length} file selezionati</b> <span class="muted">Per i file Excel viene letto il primo foglio. L’associazione delle colonne qui sotto vale per tutti i file, in base al nome delle colonne. La giornata del file è usata solo se non associ una colonna Giornata.</span><div class="tw"><table><thead><tr><th style="cursor:default">File</th><th style="cursor:default">Righe</th><th style="cursor:default">Giornata</th></tr></thead><tbody>${B.batch.map((u,i)=>u.err?`<tr><td>${esc(u.name)}</td><td colspan="2" class="neg">${esc(u.err)}</td></tr>`:`<tr><td>${esc(u.name)}</td><td>${Math.max(0,u.raw.length-u.hr-1)}</td><td><input type="number" min="1" max="60" style="width:70px" value="${u.gFile??""}" onchange="imp.voti.batch[${i}].gFile=+this.value||null;renderImp()"></td></tr>`).join("")}</tbody></table></div>${dup?`<div class="rep e">Più file hanno la stessa giornata: le righe identiche verranno unite senza doppio conteggio.</div>`:""}${miss?`<div class="rep e">Per alcuni file non è stata riconosciuta la giornata: indicala a mano.</div>`:""}</div>`}
+function doImpBatch(){const B=imp.voti,h0=(B.raw[B.hr]||[]).map(c=>norm(c)),orig=impMode.voti,reps=[];let first=true;
+ for(const u of B.batch){if(u.err){reps.push(`<div class="rep e"><b>${esc(u.name)}</b>: ${esc(u.err)}</div>`);continue}
+  const uh=(u.raw[u.hr]||[]).map(c=>norm(c));u.map={};Object.keys(B.map).forEach(f=>{const i=B.map[f];u.map[f]=i<0?-1:uh.indexOf(h0[i])});
+  imp.voti=u;impMode.voti=first?orig:"add";first=false;doImp("voti");reps.push(`<p style="margin:10px 0 0"><b>${esc(u.name)}</b>${u.map.g<0?` (giornata ${u.gFile??"non indicata"})`:""}</p>`+u.report)}
+ impMode.voti=orig;imp.voti=B;B.report=reps.join("");renderImp();ban()}
+function setSheet(I){I.raw=XLSX.utils.sheet_to_json(I.wb.Sheets[I.sheet],{header:1,raw:true,defval:null,blankrows:false}).filter(r=>r.some(c=>txt(c)!==""))}
+function impCard(kind){const I=imp[kind],t=kind=="rosa"?"1. Rosa":"2. Voti e statistiche";
+ let h=`<div class="card"><h3>${t}</h3><input type="file" accept=".csv,.xlsx,.xls,.txt" ${kind=="voti"?"multiple":""} onchange="loadFiles('${kind}',this.files)">
+ <span class="muted"> ${kind=="rosa"?"Una riga per giocatore.":"Una riga per giocatore e giornata. Puoi selezionare più file insieme, ad esempio uno per giornata."}</span>`;
+ if(I){if(I.err)h+=`<div class="rep e">${esc(I.err)}</div>`;else{
+  h+=`<div class="map"><div class="fld"><label>File</label><b>${esc(I.name)}</b></div>`;
+  if(I.sheets&&I.sheets.length>1)h+=`<div class="fld"><label>Foglio</label><select onchange="chSheet('${kind}',this.value)">${I.sheets.map(s=>`<option ${s==I.sheet?"selected":""}>${esc(s)}</option>`).join("")}</select></div>`;
+  h+=`<div class="fld"><label>Riga dell’intestazione</label><input type="number" min="1" value="${I.hr+1}" onchange="chHr('${kind}',this.value)"></div>
+  <div class="fld"><label>Se esistono già dati</label><select onchange="impMode['${kind}']=this.value"><option value="add" ${impMode[kind]=="add"?"selected":""}>Aggiungi e unisci</option><option value="replace" ${impMode[kind]=="replace"?"selected":""}>Sostituisci</option></select></div>${kind=="voti"&&!I.batch?`<div class="fld"><label>Giornata dal nome del file (usata se la colonna non è associata)</label><input type="number" min="1" max="60" value="${I.gFile??""}" onchange="imp['voti'].gFile=+this.value||null;renderImp()"></div>`:""}</div>`;
+  const hd=I.raw[I.hr]||[],opt=m=>`<option value="-1">— non presente —</option>`+hd.map((c,i)=>`<option value="${i}" ${m==i?"selected":""}>${i+1}. ${esc(txt(c)||"(vuota)")}</option>`).join("");
+  h+=`${I.batch?batchList(I):""}<b>Associa le colonne</b><div class="map">${FIELDS[kind].map(([f,l])=>`<div class="fld"><label>${l}</label><select onchange="imp['${kind}'].map['${f}']=+this.value">${opt(I.map[f])}</select></div>`).join("")}</div>
+  <b>Anteprima</b> <span class="muted">(prime 6 righe su ${Math.max(0,I.raw.length-I.hr-1)})</span><div class="tw"><table><thead><tr>${hd.map(c=>`<th style="cursor:default">${esc(txt(c))}</th>`).join("")}</tr></thead><tbody>${I.raw.slice(I.hr+1,I.hr+7).map(r=>`<tr>${hd.map((_,i)=>`<td>${esc(txt(r[i]))}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+  <p><button class="btn" onclick="${I.batch?"doImpBatch()":"doImp('"+kind+"')"}">Importa ${kind=="rosa"?"la rosa":I.batch?"tutti i file":"i voti"}</button></p>`}
+  if(I.report)h+=I.report}
+ return h+`</div>`}
+function chSheet(k,v){const I=imp[k];I.sheet=v;setSheet(I);I.hr=autoHr(I.raw);I.map=guess(k,I.raw,I.hr);I.report="";renderImp()}
+function chHr(k,v){const I=imp[k];I.hr=Math.max(0,Math.min(I.raw.length-1,(+v||1)-1));I.map=guess(k,I.raw,I.hr);renderImp()}
+function parseRuolo(s,man){const t=txt(s);if(!t)return{c:"",m:[]};const tk=t.split(/[;,\/\s\-]+/).filter(Boolean).map(x=>x.toLowerCase());
+ const isM=man||tk.some(x=>["por","dd","ds","dc","pc","e","m","w","t"].includes(x));
+ if(isM){const m=tk.filter(x=>M2C[x]).map(x=>MAN.find(y=>y.toLowerCase()==x));return{c:m.length?M2C[m[0].toLowerCase()]:"",m}}
+ const x=tk[0];const c=CW[x]||(["p","d","c","a"].includes(x)?x.toUpperCase():"");return{c,m:[]}}
+function clearDemo(){if(S.demo){S.roster=[];S.votes=[];S.demo=false;S.hasVoto=false;return true}return false}
+function doImp(kind){const I=imp[kind],m=I.map,rows=I.raw.slice(I.hr+1),R={ok:0,vuote:0,senzaNome:0,senzaG:0,dup:0,conf:0,nonNum:0,fuori:0,sv:0};
+ if(m.nome<0||(kind=="voti"&&m.g<0&&!I.gFile)){I.report=`<div class="rep e">Associa almeno le colonne obbligatorie (*): ${kind=="voti"?"nome giocatore e giornata (oppure indica la giornata nel campo dedicato)":"nome giocatore"}.</div>`;return renderImp()}
+ const hadDemo=clearDemo();
+ if(kind=="rosa"){const mp=new Map((impMode.rosa=="replace"?[]:S.roster).map(p=>[p.k,p]));
+  rows.forEach(r=>{if(!r.some(c=>txt(c)!=="")){R.vuote++;return}const nome=txt(cell(r,m.nome));if(!nome){R.senzaNome++;return}const k=norm(nome);
+   const rc=parseRuolo(cell(r,m.ruolo),false),rm=parseRuolo(cell(r,m.mantra),true),cs=num(cell(r,m.costo));
+   const p={k,nome,squadra:txt(cell(r,m.squadra)),ruolo:rm.c&&!rc.c?rm.c:rc.c,mantra:rm.m.length?rm.m:rc.m,costo:isNaN(cs)?null:cs};
+   if(mp.has(k)){R.dup++;const e=mp.get(k);["squadra","ruolo","costo"].forEach(f=>{if(!e[f]&&e[f]!==0)e[f]=p[f]});if(!(e.mantra||[]).length)e.mantra=p.mantra}else{mp.set(k,p);R.ok++}});
+  S.roster=[...mp.values()]}
+ else{const mp=new Map((impMode.voti=="replace"?[]:S.votes).map(v=>[v.k+"|"+v.g,v])),F=["voto","fanta","gol","ass","amm","esp","aut","rs","gs","rp"];
+  rows.forEach(r=>{if(!r.some(c=>txt(c)!=="")){R.vuote++;return}const nome=txt(cell(r,m.nome));if(!nome){R.senzaNome++;return}
+   const gm=m.g>=0?txt(cell(r,m.g)).match(/\d+/):null,gv=gm?+gm[0]:(m.g<0?I.gFile:null);if(!gv){R.senzaG++;return}const rec={k:norm(nome),nome,g:gv};
+   F.forEach(f=>{let v=num(cell(r,m[f]));if(Number.isNaN(v)){R.nonNum++;v=null}if(v!=null&&f=="voto"&&(v<0||v>10)){R.fuori++;v=null}if(v!=null&&f=="fanta"&&(v<-15||v>30)){R.fuori++;v=null}rec[f]=v});
+   if(m.ruolo>=0){const rr=parseRuolo(cell(r,m.ruolo),false);rec.ruolo=rr.c;rec.mantra=rr.m}
+   if(rec.voto==null&&rec.fanta==null)R.sv++;const key=rec.k+"|"+rec.g;
+   if(mp.has(key)){R.dup++;const e=mp.get(key);F.forEach(f=>{if(e[f]==null)e[f]=rec[f];else if(rec[f]!=null&&rec[f]!==e[f])R.conf++})}else{mp.set(key,rec);R.ok++}});
+  S.votes=[...mp.values()];S.hasVoto=(impMode.voti=="replace"?false:S.hasVoto)||m.voto>=0}
+ save();
+ I.report=`<div class="rep"><b>Importazione completata.</b> Righe importate: ${R.ok}.${hadDemo?" I dati dimostrativi sono stati rimossi.":""}<br>Righe vuote ignorate: ${R.vuote} · senza nome: ${R.senzaNome}${kind=="voti"?` · senza giornata: ${R.senzaG}`:""} · duplicati uniti senza doppio conteggio: ${R.dup}${kind=="voti"?` · valori in conflitto (tenuto il primo): ${R.conf} · valori non numerici ignorati: ${R.nonNum} · fuori intervallo ignorati: ${R.fuori} · righe senza voto né fantavoto (SV, non contate come zero): ${R.sv}`:""}.</div>`+
+  (kind=="voti"&&m.g<0?`<div class="rep">Giornata ${I.gFile} applicata a tutte le righe, ricavata dal nome del file.</div>`:"")+(kind=="voti"&&m.voto<0?`<div class="rep e">Colonna Voto non associata: presenze e medie si basano sul fantavoto.</div>`:"");
+ renderImp();ban()}
+function rulesCard(){const L={gol:"Gol fatto",ass:"Assist",rp:"Rigore parato",rs:"Rigore sbagliato",aut:"Autogol",amm:"Ammonizione",esp:"Espulsione",gs:"Gol subito (solo portieri)"},miss=Object.keys(L).filter(k=>!S.votes.some(v=>v[k]!=null));
+ return`<div class="card"><h3>Calcolo del fantavoto (bonus e malus)</h3><p class="muted">Fantavoto = voto + bonus e malus. I valori iniziali sono quelli del regolamento classico: sostituiscili con quelli della tua lega. Le modifiche si vedono nelle altre sezioni.</p><div class="fld" style="max-width:430px"><label>Modalità</label><select onchange="S.fvMode=this.value;save()"><option value="auto" ${S.fvMode=="auto"?"selected":""}>Usa il fantavoto del file; se manca, calcolalo</option><option value="calc" ${S.fvMode=="calc"?"selected":""}>Calcola sempre da voto, bonus e malus</option></select></div><div class="map">${Object.entries(L).map(([k,l])=>`<div class="fld"><label>${l}</label><input type="number" step="0.5" value="${S.rules[k]}" onchange="S.rules['${k}']=+this.value||0;save()"></div>`).join("")}</div>${miss.length?`<div class="rep e">Colonne bonus/malus assenti nei dati importati: ${miss.map(k=>L[k]).join(", ")}. Il fantavoto calcolato non le può includere.</div>`:""}<p class="muted">Il fantavoto calcolato richiede il voto: senza voto resta vuoto, non zero. Non sono inclusi modificatori di squadra, portiere imbattuto, bonus speciali di lega.</p></div>`}
+function renderImp(){$("#view").innerHTML=`<div class="card"><b>Come funziona</b>${CEN()?"<p>La tua rosa resta nel tuo browser. I voti delle giornate sono caricati centralmente dall’amministratore: non c’è nessun collegamento a Fantacalcio.it e nessun aggiornamento automatico.</p>":"<p>La prima versione usa <b>solo i file che carichi tu</b>: non c’è nessun collegamento a Fantacalcio.it, nessuna API esterna e nessun aggiornamento automatico dei voti. I dati restano nel tuo browser.</p>"}
+ <details><summary>Come convertire il tuo Excel in CSV senza perdere dati</summary><p>Se il file .xlsx non si carica, in Excel scegli <i>File → Salva con nome → CSV UTF-8 (delimitato dal separatore di elenco)</i>. Un CSV contiene un solo foglio: ripeti l’operazione per ogni foglio e importali uno dopo l’altro con “Aggiungi e unisci”. Controlla che i decimali siano coerenti (virgola o punto sono entrambi accettati) e che il formato sia una riga per giocatore e giornata. Se il tuo storico ha una colonna per giornata, va prima trasformato in questo formato lungo.</p></details></div>${impCard("rosa")}${CEN()?centralInfo():impCard("voti")+rulesCard()}${SH.db&&SH.owner?adminCard():""}
+ <div class="card"><h3>Dati salvati</h3><p>${S.roster.length} giocatori in rosa, ${S.votes.length} righe di voti.</p><button class="btn red" onclick="if(confirm('Eliminare tutti i dati?')){S.roster=[];S.votes=[];S.demo=false;S.hasVoto=false;save();render()}">Elimina tutti i dati</button></div>`}
+
+/* ---------- APP ---------- */
+let SH={db:null,owner:false,docs:{},meta:null,votes:null,err:"",msg:"",loaded:false};
+const CEN=()=>!!SH.db&&!SH.owner;
+async function initShared(){try{if(!window.claude||!claude.use)return initStatic();const[db,user]=await Promise.all([claude.use("db"),claude.use("user")]);if(!db)return initStatic();
+ SH.owner=user?await user.isOwner():false;SH.db=db;
+ db.collection("giornate").onSnapshot(sn=>{SH.docs={};sn.docs.forEach(d=>SH.docs[d.id]=d.data());SH.err="";applyShared()},e=>{SH.err=e.code||"errore";render()});
+ db.doc("lega/regole").onSnapshot(s=>{SH.meta=s.exists?s.data():null;applyShared()},()=>{});render()}catch(e){}}
+function applyShared(){const vs=[];Object.values(SH.docs||{}).sort((a,b)=>a.g-b.g).forEach(d=>(d.rows||[]).forEach(r=>vs.push({k:norm(r[0]),nome:r[0],g:d.g,voto:r[1],fanta:r[2],gol:r[3],ass:r[4],amm:r[5],esp:r[6],aut:r[7],rs:r[8],gs:r[9],rp:r[10]})));SH.votes=vs;const M=SH.meta;
+ if(!SH.owner){if(M){if(M.rules)S.rules={...DR,...M.rules};S.fvMode=M.fvMode||"auto";S.hasVoto=M.hasVoto!==false}if(vs.length&&S.demo){S.demo=false;S.roster=[]}if(!S.demo)S.votes=vs;save()}
+ else if(!SH.loaded&&!S.demo&&!S.votes.length&&vs.length){S.votes=vs.slice();if(M&&M.rules){S.rules={...DR,...M.rules};S.fvMode=M.fvMode||"auto"}S.hasVoto=!M||M.hasVoto!==false;save()}
+ SH.loaded=true;render()}
+function centralInfo(){const gs=[...new Set((SH.votes||[]).map(v=>v.g))].sort((a,b)=>a-b),miss=SH.votes&&SH.votes.length?S.roster.filter(p=>!SH.votes.some(v=>v.k===p.k)).map(p=>p.nome):[];
+ return`<div class="card"><h3>2. Voti e statistiche</h3><p>Gestiti centralmente dall’amministratore: non devi caricare nulla.</p><p><b>Giornate disponibili:</b> ${gs.length?gs.join(", "):"nessuna giornata ancora pubblicata"}${SH.meta&&SH.meta.updatedAt?` · ultimo aggiornamento ${esc(SH.meta.updatedAt.slice(0,10))}`:""}.</p>${SH.err?`<div class="rep e">Impossibile leggere i voti centrali (${esc(SH.err)}).</div>`:""}${miss.length?`<div class="rep e">Giocatori della tua rosa senza voti nei dati centrali (nome diverso o nessuna presenza): ${esc(miss.slice(0,15).join(", "))}${miss.length>15?" …":""}. I nomi devono coincidere con quelli dei file dei voti.</div>`:""}</div>`}
+function admMsg(m){SH.msg=m;const e=$("#adm");if(e)e.textContent=m}
+function adminCard(){if(SH.db&&SH.db.static)return adminStatic();const gs=Object.values(SH.docs||{}).map(d=>d.g).sort((a,b)=>a-b);
+ return`<div class="card"><h3>Amministrazione: voti centrali (solo proprietario)</h3><p>Importa qui sopra i file delle giornate, poi premi Pubblica: tutti gli utenti vedranno gli stessi voti e potranno caricare solo la propria rosa. Le regole del fantavoto impostate in questa pagina sono pubblicate insieme ai voti. Una giornata già pubblicata con lo stesso numero viene sostituita.</p><p><b>Giornate pubblicate:</b> ${gs.length?gs.join(", "):"nessuna"}${SH.meta&&SH.meta.updatedAt?` · ultimo aggiornamento ${esc(SH.meta.updatedAt.slice(0,16).replace("T"," "))}`:""}<br><b>Nel tuo spazio di lavoro:</b> ${new Set(S.votes.map(v=>v.g)).size} giornate, ${S.votes.length} righe</p><div class="bar"><button class="btn" onclick="publishAll()">Pubblica per tutti</button><button class="btn sec" onclick="pullAll()">Carica i voti pubblicati nel mio spazio</button><select id="dg">${gs.map(g=>`<option>${g}</option>`).join("")}</select><button class="btn red" onclick="delG()">Elimina giornata pubblicata</button></div><div id="adm" class="muted">${esc(SH.msg)}</div></div>`}
+async function publishAll(){if(S.demo)return admMsg("Elimina prima i dati dimostrativi.");if(!S.votes.length)return admMsg("Nessun voto da pubblicare: importa prima i file delle giornate.");
+ const by={};S.votes.forEach(v=>(by[v.g]=by[v.g]||[]).push(v));const n=Object.keys(by).length;if(!confirm("Pubblicare "+n+" giornate per tutti gli utenti? Le giornate già presenti con lo stesso numero saranno sostituite."))return;
+ try{for(const g of Object.keys(by))await SH.db.doc("giornate/g"+g).set({g:+g,rows:by[g].map(v=>[v.nome,v.voto,v.fanta,v.gol,v.ass,v.amm,v.esp,v.aut,v.rs,v.gs,v.rp])});
+  await SH.db.doc("lega/regole").set({rules:S.rules,fvMode:S.fvMode,hasVoto:S.hasVoto,updatedAt:new Date().toISOString()});admMsg("Pubblicate "+n+" giornate.")}catch(e){admMsg("Errore di pubblicazione: "+(e.code||e.message))}}
+function pullAll(){if(!SH.votes||!SH.votes.length)return admMsg("Non ci sono voti pubblicati.");if(!confirm("Sostituire i voti del tuo spazio di lavoro con quelli pubblicati?"))return;S.demo=false;S.votes=SH.votes.slice();if(SH.meta&&SH.meta.rules){S.rules={...DR,...SH.meta.rules};S.fvMode=SH.meta.fvMode||"auto"}S.hasVoto=!SH.meta||SH.meta.hasVoto!==false;save();render()}
+async function delG(){const g=$("#dg")&&$("#dg").value;if(!g)return admMsg("Nessuna giornata da eliminare.");if(!confirm("Eliminare la giornata "+g+" per tutti gli utenti?"))return;try{await SH.db.doc("giornate/g"+g).delete();admMsg("Giornata "+g+" eliminata.")}catch(e){admMsg("Errore: "+(e.code||e.message))}}
+const ADM=()=>/[?&]admin\b/.test(location.search);
+async function initStatic(){try{const r=await fetch("voti.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;const J=await r.json();if(!J||!Array.isArray(J.giornate))throw 0;
+ SH.owner=ADM();SH.db={static:true};SH.docs={};J.giornate.forEach(d=>SH.docs["g"+d.g]=d);SH.meta=J.regole?{...J.regole,updatedAt:J.aggiornato||J.regole.updatedAt}:null;applyShared()}
+ catch(e){if(ADM()){SH.owner=true;SH.db={static:true};SH.docs={};SH.loaded=true;render()}}}
+function adminStatic(){const n=new Set(S.votes.map(v=>v.g)).size,pub=[...new Set((SH.votes||[]).map(v=>v.g))].sort((a,b)=>a-b);
+ return`<div class="card"><h3>Amministrazione: voti.json (modalit\u00e0 ?admin)</h3><p>Importa qui sopra i file delle giornate, poi scarica <b>voti.json</b> e sostituisci il file sul tuo hosting, accanto a index.html. Gli utenti vedranno i nuovi voti al prossimo caricamento della pagina. Il file contiene <b>tutte</b> le giornate del tuo spazio di lavoro e le regole del fantavoto impostate qui: se parti da zero, carica prima il voti.json gi\u00e0 pubblicato.</p><p><b>Giornate nel voti.json pubblicato:</b> ${pub.length?pub.join(", "):"nessuna"}<br><b>Nel tuo spazio di lavoro:</b> ${n} giornate, ${S.votes.length} righe</p><div class="bar"><button class="btn" onclick="exportJson()">Scarica voti.json</button><button class="btn sec" onclick="pullAll()">Carica il voti.json pubblicato nel mio spazio</button></div><div id="adm" class="muted">${esc(SH.msg)}</div></div>`}
+function exportJson(){if(S.demo)return admMsg("Elimina prima i dati dimostrativi.");if(!S.votes.length)return admMsg("Nessun voto da esportare.");
+ const by={};S.votes.forEach(v=>(by[v.g]=by[v.g]||[]).push(v));const now=new Date().toISOString();
+ const J={versione:1,aggiornato:now,regole:{rules:S.rules,fvMode:S.fvMode,hasVoto:S.hasVoto,updatedAt:now},giornate:Object.keys(by).map(Number).sort((a,b)=>a-b).map(g=>({g,rows:by[g].map(v=>[v.nome,v.voto,v.fanta,v.gol,v.ass,v.amm,v.esp,v.aut,v.rs,v.gs,v.rp])}))};
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(J)],{type:"application/json"}));a.download="voti.json";document.body.appendChild(a);a.click();a.remove();admMsg("voti.json scaricato ("+J.giornate.length+" giornate).")}
+function legenda(){const sec=(t,rows)=>`<div class="card"><h3>${t}</h3><div class="tw"><table><tbody>${rows.map(r=>`<tr><td style="vertical-align:top;white-space:normal;font-weight:600;width:210px">${r[0]}</td><td style="text-align:left;white-space:normal">${r[1]}</td></tr>`).join("")}</tbody></table></div></div>`;
+ return`<p class="muted">Come sono calcolati i valori mostrati nell’app. Tutti i calcoli usano solo i dati che hai importato. «—» significa dato non disponibile, mai zero.</p>`+
+ sec("Dati di base",[
+ ["Prestazione valida","Una giornata in cui il giocatore ha un voto. Se non hai associato la colonna Voto, conta la giornata con un fantavoto. Le giornate senza voto (SV) non sono valide e non sono mai trattate come zero."],
+ ["Presenze","Numero di prestazioni valide del giocatore nelle giornate considerate."],
+ ["% con voto","Presenze divise per le giornate presenti nei dati (nell’intervallo scelto dal filtro). Nei totali della Dashboard: presenze di tutti i giocatori divise per (giocatori con almeno una riga di dati × giornate considerate)."],
+ ["Giornate considerate","Giornate diverse presenti nei dati dei giocatori in rosa, dentro l’intervallo di giornate eventualmente filtrato."],
+ ["Dati insufficienti","Etichetta mostrata con meno di 3 prestazioni valide: le medie sono calcolate, ma poco affidabili (in corsivo)."]]) +
+ sec("Medie",[
+ ["Media voto","Media aritmetica dei voti delle prestazioni valide."],
+ ["Fantamedia","Media aritmetica dei fantavoti delle prestazioni valide."],
+ ["Fantavoto","Se il file lo contiene, è usato così com’è. Se manca (e c’è il voto) è calcolato: voto + somma di (valore della regola × numero di eventi) per gol, assist, rigori parati, rigori sbagliati, autogol, ammonizioni, espulsioni e, solo per i portieri, gol subiti. Le regole si modificano in Importazione. Nella scheda giocatore i valori calcolati hanno un asterisco. Senza voto il fantavoto calcolato resta vuoto. Non sono inclusi modificatori di squadra e bonus speciali di lega."],
+ ["Ult. 5","Media delle ultime 5 prestazioni valide del giocatore, in ordine di giornata, saltando le giornate senza voto. Usa il fantavoto se il giocatore ne ha almeno uno, altrimenti il voto. Se le prestazioni sono meno di 5, il numero usato è indicato tra parentesi."],
+ ["Δ forma","Ult. 5 meno la media stagionale (fantamedia, oppure media voto se mancano i fantavoti), sempre con la stessa metrica. Positivo (verde): rende sopra la sua media. Negativo (rosso): sotto. Le ultime 5 sono incluse nella media stagionale, quindi con 5 o meno prestazioni valide il delta è 0. Con filtri per giornata entrambe le medie sono calcolate nell’intervallo."]]) +
+ sec("Bonus, malus e totali",[
+ ["Gol, Assist","Somma dei valori presenti nelle giornate considerate. «GF» nella mappa di calore è la stessa somma dei gol."],
+ ["Malus","Ammonizioni + espulsioni + autogol + rigori sbagliati. I gol subiti e i rigori parati sono mostrati a parte («Gol sub.», «Rig. par.»)."],
+ ["GS","Gol subiti: mostrati solo per i portieri (P in Classic, Por in Mantra)."],
+ ["Cartellini","Rosso = totale espulsioni; giallo = totale ammonizioni, nelle giornate considerate."],
+ ["Totali con «—»","Se la colonna non è presente nel file importato, il totale è «—». Se è presente, anche uno zero è un dato reale."]]) +
+ sec("Dashboard",[
+ ["Media voto e fantamedia (KPI)","Media di tutte le valutazioni valide dei giocatori filtrati, messe insieme. Non è la media delle medie dei singoli giocatori. Il numero di valutazioni usate è indicato sotto il valore."],
+ ["Andamento medie per giornata","Per ogni giornata, media delle valutazioni valide dei giocatori filtrati. Nel tooltip è indicato su quante valutazioni si basa. Le giornate senza dati restano vuote."],
+ ["Ultime cinque prestazioni","Primi 10 giocatori per media delle ultime 5 prestazioni valide (barra verde), confrontata con la media stagionale (barra blu)."],
+ ["Mappa di calore","Una riga per giocatore, una colonna per giornata, divisi per ruolo. Il colore è su scala fissa: neutro a 6, verde sopra, rosso sotto, con intensità massima a ±3,5 per il fantavoto e ±2,5 per il voto. «Media» è la media dei valori validi mostrati, «#» quanti sono. Il punto · è una giornata senza valore. Clicca sull’intestazione di una colonna (giocatore, giornata, Media, #, GF, GS, cartellini) per ordinare le righe; un secondo clic inverte l’ordine. All’apertura è ordinata per media decrescente."],
+ ["Ordinamento tabelle","I valori mancanti finiscono sempre in fondo, qualunque sia l’ordine scelto."]]) +
+ sec("Filtri",[
+ ["Ruolo","In Classic: P, D, C, A. In Mantra: posizioni presenti nei dati. Nel passaggio da Mantra a Classic, Por → P; Dd, Ds, Dc → D; E, M, C, W, T → C; A, Pc → A."],
+ ["Giornate da / a","Limita ogni calcolo della Dashboard e dei Giocatori alle giornate scelte. La scheda del singolo giocatore e la vista Rosa usano sempre tutte le giornate."],
+ ["Ultime 5 giornate","Imposta «da» alla quinta giornata più recente presente nei dati. È diverso da «Ult. 5», che prende le ultime 5 prestazioni valide di ciascun giocatore anche se non sono le ultime 5 giornate del campionato."],
+ ["Cerca giocatore","Il menu propone solo i giocatori che rispettano ruolo e giornate, in ordine alfabetico."]]) +
+ sec("Importazione e qualità dei dati",[
+ ["Duplicati","Un voto è identificato da giocatore + giornata. Se la stessa riga compare più volte (anche in file o fogli diversi) è unita e non contata due volte. Se i valori differiscono si tiene il primo e il conflitto è segnalato nel resoconto."],
+ ["Nome del giocatore","Confrontato senza accenti, maiuscole e punteggiatura. Due giocatori con lo stesso nome non sono distinguibili."],
+ ["Valori non validi","Voti fuori da 0–10 e fantavoti fuori da −15/+30 sono ignorati e segnalati. I testi come SV o «-» diventano dato mancante."],
+ ["Rosa ricavata dai voti","Se non hai importato la rosa, i giocatori sono ricavati dal file dei voti e sono indicati come tali."],
+ ["Origine dei dati","Rosa: il file che carichi tu, salvato nel tuo browser. Voti: quelli pubblicati centralmente dall’amministratore (in modalità locale, i file che carichi tu). Nessun collegamento a Fantacalcio.it e nessun aggiornamento automatico."]])}
+const TT={dashboard:"Dashboard",rosa:"Rosa",giocatori:"Giocatori",importazione:"Importazione",legenda:"Legenda"};
+function ban(){$("#ban").innerHTML=S.demo?`<div class="banner"><span><b>Dati dimostrativi.</b> Giocatori e voti sono fittizi e servono solo a mostrare il funzionamento.</span><button class="btn" onclick="S.roster=[];S.votes=[];S.demo=false;S.hasVoto=false;save();render()">Elimina dati dimostrativi</button><a href="#importazione">Importa la tua rosa</a></div>`:""}
+function render(){if(CEN()&&SH.votes&&!S.demo)S.votes=SH.votes;const v=(location.hash||"#dashboard").slice(1),V=TT[v]?v:"dashboard";
+ document.querySelectorAll("aside a").forEach(a=>a.classList.toggle("on",a.dataset.v==V));document.querySelectorAll("#fmt button").forEach(b=>b.classList.toggle("on",b.dataset.f==S.fmt));
+ $("#ttl").textContent=TT[V];ban();if(V=="importazione")renderImp();else{$("#view").innerHTML={dashboard,rosa,giocatori,legenda}[V]();if(KEEP&&$("#q"))$("#q").replaceWith(KEEP);const q=$("#q");if(q)q.oninput=e=>{UI.q=e.target.value;const o=e.target,p=o.selectionStart;KEEP=o;render();KEEP=null;o.focus();try{o.setSelectionRange(p,p)}catch(x){}}}
+ drawer()}
+document.querySelectorAll("#fmt button").forEach(b=>b.onclick=()=>{S.fmt=b.dataset.f;UI.role="";save();render()});
+window.addEventListener("hashchange",()=>{UI.sel=null;render()});render();initShared();
+</script></body></html>
