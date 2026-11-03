@@ -1,27 +1,33 @@
 <!DOCTYPE html>
-<html lang="it"><head><meta charset="utf-8">
+<html lang="it" data-t="stadio"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fanta Analytics</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#f3f6fb;--card:#fff;--ink:#0f1f3d;--mut:#5b6b86;--line:#dfe6f0;--navy:#0b1f3a;--green:#16a34a;--gsoft:#e3f5ea;--c1:#1e3a8a;--warn:#fff4d6;--wink:#6b4e00;--bad:#b42318;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--sb:#0b1f3a;--sx:#dbe5f5;--sl:#c3d1ea;--sa:#14305a;--sh:#102a4e;--sg:#4ade80;--sm:#8fa5c9;--bg:#f3f6fb;--card:#fff;--ink:#0f1f3d;--mut:#5b6b86;--line:#dfe6f0;--navy:#0b1f3a;--green:#16a34a;--gsoft:#e3f5ea;--c1:#1e3a8a;--warn:#fff4d6;--wink:#6b4e00;--bad:#b42318;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1424;--card:#111f36;--ink:#e8eef9;--mut:#93a4c0;--line:#223454;--gsoft:#12331f;--c1:#7aa2f7;--warn:#3a2f10;--wink:#f3d98a;--bad:#ff8a80}}
+:root[data-t="stadio"]{--bg:#eef5ec;--card:#fff;--ink:#12261b;--mut:#587061;--line:#d5e3d3;--navy:#0b3d2e;--green:#1f9d55;--gsoft:#e1f3e2;--c1:#1f5fbf;--warn:#fff6d6;--wink:#6b4e00;--bad:#c0392b;--sb:#0b3d2e;--sx:#e4f3e8;--sl:#bfdcc8;--sa:#136b49;--sh:#0f5139;--sg:#f4d03f;--sm:#8fbf9f}
+@media(min-width:761px){:root[data-t="stadio"] aside{gap:0}
+:root[data-t="stadio"] aside a{margin:0 -12px;padding:12px 10px 12px 22px;border-radius:0}
+:root[data-t="stadio"] aside a:nth-of-type(odd){background:rgba(255,255,255,.07)}
+:root[data-t="stadio"] aside a:hover{background:var(--sh)}
+:root[data-t="stadio"] aside a.on{background:var(--sa)}}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.app{display:flex;min-height:100vh}aside{width:220px;background:var(--navy);color:#dbe5f5;padding:18px 12px;flex:none;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
-aside h1{font-size:18px;margin:0 8px 14px;color:#fff;letter-spacing:.2px}aside h1 span{color:#4ade80}
-aside a{color:#c3d1ea;text-decoration:none;padding:9px 10px;border-radius:8px;border-left:3px solid transparent}aside a.on{background:#14305a;color:#fff;border-left-color:#4ade80}aside a:hover{background:#102a4e}
-aside small{margin:auto 8px 0;color:#8fa5c9;font-size:11.5px}
+.app{display:flex;min-height:100vh}aside{width:220px;background:var(--sb) var(--sbi,none);color:var(--sx);padding:18px 12px;flex:none;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+aside h1{font-size:18px;margin:0 8px 14px;color:#fff;letter-spacing:.2px}aside h1 span{color:var(--sg)}
+aside a{color:var(--sl);text-decoration:none;padding:9px 10px;border-radius:8px;border-left:3px solid transparent}aside a.on{background:var(--sa);color:#fff;border-left-color:var(--sg)}aside a:hover{background:var(--sh)}
+aside small{margin:auto 8px 0;color:var(--sm);font-size:11.5px}
 main{flex:1;min-width:0;padding:20px 24px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.top h2{margin:0;font-size:22px}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}.seg button{border:0;background:none;color:var(--ink);padding:6px 14px;cursor:pointer;font:inherit}.seg button.on{background:var(--navy);color:#fff}
 .banner{background:var(--warn);color:var(--wink);border:1px solid #e6c766;border-radius:8px;padding:10px 12px;margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.btn{background:var(--green);color:#fff;border:0;border-radius:8px;padding:7px 14px;cursor:pointer;font:inherit;font-weight:600}.btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}.btn.red{background:var(--bad)}
+.btn{background:var(--ac,var(--green));color:#fff;border:0;border-radius:8px;padding:7px 14px;cursor:pointer;font:inherit;font-weight:600}.btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}.btn.red{background:var(--bad)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}.card h3{margin:0 0 10px;font-size:15px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}.kpi{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--green);border-radius:8px;padding:10px 12px}.kpi b{display:block;font-size:22px}.kpi span{color:var(--mut);font-size:12px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}.kpi{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--ac,var(--green));border-radius:8px;padding:10px 12px}.kpi b{display:block;font-size:22px}.kpi span{color:var(--mut);font-size:12px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:1000px){.grid2{grid-template-columns:1fr}}
 .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.bar input,.bar select,.fld select,.fld input{padding:6px 9px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);font:inherit}
-.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:4px 12px;cursor:pointer;font:inherit}.chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:4px 12px;cursor:pointer;font:inherit}.chip.on{background:var(--ac,var(--green));border-color:var(--ac,var(--green));color:#fff}
 .tw{overflow-x:auto}.tw.sc{overflow:auto;max-height:72vh}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:var(--mut);font-weight:600;cursor:pointer;user-select:none;background:var(--card);position:sticky;top:0;z-index:2}tbody tr:hover{background:var(--gsoft)}tr.cl{cursor:pointer}
 .low{color:var(--mut);font-style:italic}.muted{color:var(--mut)}.tag{font-size:11px;background:var(--gsoft);color:var(--green);border-radius:4px;padding:1px 6px;margin-left:4px}.tag.w{background:var(--warn);color:var(--wink)}
 .pos{color:var(--green);font-weight:600}.neg{color:var(--bad);font-weight:600}
@@ -34,7 +40,7 @@ svg text{fill:var(--mut);font-size:11px}.gl{stroke:var(--line)}.l1{stroke:var(--
 <div class="app"><aside><h1>Fanta <span>Analytics</span></h1>
 <a href="#dashboard" data-v="dashboard">Dashboard</a><a href="#rosa" data-v="rosa">Rosa</a><a href="#giocatori" data-v="giocatori">Giocatori</a><a href="#importazione" data-v="importazione">Importazione</a><a href="#legenda" data-v="legenda">Legenda</a>
 <small>I dati sono quelli caricati da te o dall’amministratore. Nessun collegamento a Fantacalcio.it e nessun aggiornamento automatico dei voti.</small></aside>
-<main><div class="top"><h2 id="ttl"></h2><div class="seg" id="fmt"><button data-f="classic">Classic</button><button data-f="mantra">Mantra</button></div></div><div id="ban"></div><div id="view"></div></main></div>
+<main><div class="top"><h2 id="ttl"></h2><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><div class="seg" id="fmt"><button data-f="classic">Classic</button><button data-f="mantra">Mantra</button></div></div></div><div id="ban"></div><div id="view"></div></main></div>
 <div id="dr"></div>
 <script>
 const KEY="fantaAnalyticsV1",$=s=>document.querySelector(s);
